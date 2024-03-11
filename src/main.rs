@@ -7,7 +7,7 @@ fn main() {
     let pos = shakmaty::Chess::default();
     let board = pos.board();
 
-    let score = evaluator::piece_value(board).unwrap();
+    let score = evaluator::evaluate(board);
 
     print!("{}", score);
 }
