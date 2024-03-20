@@ -11,7 +11,7 @@ fn main() {
     let score = evaluator::evaluate(board);
     let best_move = move_gen::depth_1_best_move(pos).unwrap();
 
-    println!("Best move: {}", best_move.to_string());
+    println!("Best move: {}", best_move);
 
     print!("{}", score);
 }

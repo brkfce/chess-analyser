@@ -1,4 +1,4 @@
-use shakmaty::{Color, Position, Role};
+use shakmaty::{Position};
 
 pub fn depth_1_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
     // finds the best move for the current position
@@ -6,7 +6,7 @@ pub fn depth_1_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
     // for the time being, only going to search once (no recursion)
 
     let moves_list = position.legal_moves();
-    if moves_list.len() == 0 {
+    if moves_list.is_empty() {
         return None;
     }
 
@@ -15,7 +15,7 @@ pub fn depth_1_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
     for x in moves_list.clone() {
         let temp_pos = position.clone();
         let new_pos = temp_pos.play(&x).unwrap();
-        moves_score.push(crate::evaluator::evaluate(&new_pos.board()));
+        moves_score.push(crate::evaluator::evaluate(new_pos.board()));
     }
 
     // return move with best evaluator score
@@ -32,12 +32,12 @@ fn highest_score_index(scores: Vec<f32>) -> Option<i8> {
     let mut index: i8 = 0;
     let mut top_index: i8 = 0;
 
-    if scores.len() == 0 {
+    if scores.is_empty() {
         return None;
     } else {
         temp_max = scores[0];
         for x in scores {
-            index = index + 1;
+            index += 1;
             if x > temp_max {
                 temp_max = x;
                 top_index = index;

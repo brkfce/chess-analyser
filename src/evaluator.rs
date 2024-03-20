@@ -56,7 +56,7 @@ fn piece_value(board: &shakmaty::Board) -> f32 {
     let b_q_s = count_set_bits(b_q.0);
 
     // sum total score
-    let piece_value = (w_p_s - b_p_s) * 1
+    let piece_value = (w_p_s - b_p_s)
         + (w_n_s - b_n_s) * 3
         + (w_b_s - b_b_s) * 3
         + (w_r_s - b_r_s) * 5
@@ -69,7 +69,7 @@ fn count_set_bits(bits: u64) -> i8 {
     // counts the number of set bits in a u64
 
     let mut count: u64 = 0;
-    let mut bits = bits.clone();
+    let mut bits = bits;
 
     while bits != 0 {
         count += bits & 1;
