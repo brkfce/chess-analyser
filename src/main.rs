@@ -9,7 +9,7 @@ fn main() {
     let board = pos.board();
 
     let score = evaluator::evaluate(board);
-    let best_move = move_gen::find_best_move(pos).unwrap();
+    let best_move = move_gen::depth_1_best_move(pos).unwrap();
 
     println!("Best move: {}", best_move.to_string());
 

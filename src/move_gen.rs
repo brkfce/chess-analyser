@@ -1,11 +1,9 @@
 use shakmaty::{Color, Position, Role};
 
-pub fn find_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
+pub fn depth_1_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
     // finds the best move for the current position
 
     // for the time being, only going to search once (no recursion)
-
-    let _depth = 1;
 
     let moves_list = position.legal_moves();
     if moves_list.len() == 0 {
@@ -26,6 +24,7 @@ pub fn find_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
 
     Some(best_move)
 }
+
 fn highest_score_index(scores: Vec<f32>) -> Option<i8> {
     // returns the index of the vec that contains the highest score
 

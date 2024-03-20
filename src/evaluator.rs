@@ -1,4 +1,4 @@
-use shakmaty::{Color, Position, Role};
+use shakmaty::{Color, Role};
 
 pub fn evaluate(board: &shakmaty::Board) -> f32 {
     let piece_value_mod = 0.1;
