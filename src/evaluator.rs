@@ -7,7 +7,10 @@ pub fn evaluate(board: &shakmaty::Board) -> f32 {
     let centre_pawn_mod = 0.1;
     let centre_pawn = centre_pawn(board) * centre_pawn_mod;
 
-    piece_value + centre_pawn
+    let centre_knight_mod = 0.1;
+    let centre_knight = centre_knight(board) * centre_knight_mod;
+
+    piece_value + centre_pawn + centre_knight
 }
 
 fn piece_value(board: &shakmaty::Board) -> f32 {
@@ -65,20 +68,6 @@ fn piece_value(board: &shakmaty::Board) -> f32 {
     piece_value as f32
 }
 
-fn count_set_bits(bits: u64) -> i8 {
-    // counts the number of set bits in a u64
-
-    let mut count: u64 = 0;
-    let mut bits = bits;
-
-    while bits != 0 {
-        count += bits & 1;
-        bits >>= 1;
-    }
-
-    i8::try_from(count).ok().unwrap()
-}
-
 fn centre_pawn(board: &shakmaty::Board) -> f32 {
     // evaluates the control of the centre with pawns
 
@@ -91,4 +80,35 @@ fn centre_pawn(board: &shakmaty::Board) -> f32 {
     let b_p_s = count_set_bits(b_p.0);
 
     (w_p_s - b_p_s) as f32
+}
+
+fn centre_knight(board: &shakmaty::Board) -> f32 {
+    // evaluates the centre positioning of the knights
+
+    // bitboard representing all squares except the edge squares
+    let centre_squares = shakmaty::Bitboard(0x007e_7e7e_7e7e_7e00);
+
+    // score from white knights
+    let w_n = board.by_color(Color::White) & board.by_role(Role::Knight) & centre_squares;
+    let w_n_s = count_set_bits(w_n.0);
+
+    // score from black knights
+    let b_n = board.by_color(Color::Black) & board.by_role(Role::Knight) & centre_squares;
+    let b_n_s = count_set_bits(b_n.0);
+
+    (w_n_s - b_n_s) as f32
+}
+
+fn count_set_bits(bits: u64) -> i8 {
+    // counts the number of set bits in a u64
+
+    let mut count: u64 = 0;
+    let mut bits = bits;
+
+    while bits != 0 {
+        count += bits & 1;
+        bits >>= 1;
+    }
+
+    i8::try_from(count).ok().unwrap()
 }
