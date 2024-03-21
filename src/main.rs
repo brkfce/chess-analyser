@@ -1,4 +1,4 @@
-use shakmaty::{self, Position};
+use shakmaty::{self, fen, CastlingMode, Position};
 
 mod evaluator;
 mod move_gen;
@@ -7,10 +7,26 @@ fn main() {
     // create initial position
     let pos = shakmaty::Chess::default();
     let board = pos.board();
+
     // find score of initial position
     let score = evaluator::evaluate(board);
-    print!("{}", score);
+    println!("Score, initial: {}", score);
+
     // find best move from initial position
     let best_move = move_gen::depth_1_best_move(pos).unwrap();
-    println!("Best move: {}", best_move);
+    println!("Best move, initial: {}", best_move);
+
+    // create non-initial position
+    let fen: fen::Fen = "rnbqkb1r/pp2pppp/2p2n2/2Pp2B1/3P4/8/PP2PPPP/RN1QKBNR b KQkq - 1 4"
+        .parse()
+        .unwrap();
+    let pos_2: shakmaty::Chess = fen.into_position(CastlingMode::Standard).unwrap();
+
+    // find score of non-initial position
+    let score_2 = evaluator::evaluate(pos_2.board());
+    println!("Score, non-initial: {}", score_2);
+
+    // find best move from non-initial position
+    let best_move_2 = move_gen::depth_1_best_move(pos_2).unwrap();
+    println!("Best move, non-initial: {}", best_move_2);
 }
