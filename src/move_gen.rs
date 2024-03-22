@@ -1,4 +1,6 @@
-use shakmaty::{Position};
+use crate::evaluator::evaluate;
+use shakmaty::{Move, Position};
+use std::f32::INFINITY;
 
 pub fn depth_1_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
     // finds the best move for the current position
@@ -25,6 +27,90 @@ pub fn depth_1_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
     Some(best_move)
 }
 
+// constructing a tree of positions
+pub struct PositionNode {
+    position: shakmaty::Chess,
+    score: f32,
+    children: Vec<PositionNode>,
+    source_move: Option<shakmaty::Move>,
+}
+
+impl PositionNode {
+    pub fn new(position: shakmaty::Chess, score: f32, source_move: Option<Move>) -> Self {
+        PositionNode {
+            position,
+            score,
+            children: Vec::new(),
+            source_move,
+        }
+    }
+    fn new_child(&mut self, child: PositionNode) -> () {
+        self.children.push(child);
+    }
+}
+
+fn minimax(node: &mut PositionNode, maximising: bool, depth: i8) -> f32 {
+    // implementation of the minimax algorithm
+    // end if max depth is reached, or the game is over
+    if depth == 0 {
+        return evaluate(node.position.board());
+    } else {
+        // generate children positions and nodes
+        let child_moves = node.position.legal_moves();
+        for x in child_moves {
+            let new_position = node.position.clone().play(&x);
+            match new_position {
+                Ok(legal_move) => node.new_child(PositionNode::new(
+                    legal_move.clone(),
+                    evaluate(legal_move.board()),
+                    Some(x.clone()),
+                )),
+                Err(_) => return node.score,
+            }
+        }
+        // find best value for player 1/player we are hoping to "win"
+        if maximising {
+            let mut value = -INFINITY;
+            // recurse for each sub position
+            for mut child in &mut node.children {
+                value = f32::max(value, minimax(&mut child, false, depth - 1));
+            }
+            return value;
+        // find best value for player 2/player we are hoping to "beat"
+        } else {
+            let mut value = INFINITY;
+            // recurse for each child position
+            for mut child in &mut node.children {
+                value = f32::min(value, minimax(&mut child, true, depth - 1));
+            }
+            return value;
+        }
+    }
+}
+
+pub fn use_minimax(
+    initial_position: shakmaty::Chess,
+    maximising: bool,
+    depth: i8,
+) -> Option<shakmaty::Move> {
+    // use the minimax algo to find the best move
+    let mut initial_node = PositionNode::new(
+        initial_position.clone(),
+        evaluate(initial_position.clone().board()),
+        None,
+    );
+    let best_score = minimax(&mut initial_node, maximising, depth);
+    if initial_node.children.len() == 0 {
+        return None;
+    } else {
+        let best_child = initial_node
+            .children
+            .iter()
+            .find(|child| child.score == best_score)
+            .unwrap();
+        return Some(best_child.source_move.clone()?);
+    }
+}
 fn highest_score_index(scores: Vec<f32>) -> Option<i8> {
     // returns the index of the vec that contains the highest score
 

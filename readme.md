@@ -11,6 +11,6 @@ Using shakmaty as the chess engine.
 
 ### Later
 
-- Increase depth of searches.
+- Implement a/b pruning to make the minimax algo more efficient.
 - Add further checks for evaluating a position.
   - Have child position scores affect the parent score.
