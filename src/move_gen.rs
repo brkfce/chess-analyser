@@ -44,7 +44,7 @@ impl PositionNode {
             source_move,
         }
     }
-    fn new_child(&mut self, child: PositionNode) -> () {
+    fn new_child(&mut self, child: PositionNode) {
         self.children.push(child);
     }
 }
@@ -72,18 +72,18 @@ fn minimax(node: &mut PositionNode, maximising: bool, depth: i8) -> f32 {
         if maximising {
             let mut value = -INFINITY;
             // recurse for each sub position
-            for mut child in &mut node.children {
-                value = f32::max(value, minimax(&mut child, false, depth - 1));
+            for child in &mut node.children {
+                value = f32::max(value, minimax(child, false, depth - 1));
             }
-            return value;
+            value
         // find best value for player 2/player we are hoping to "beat"
         } else {
             let mut value = INFINITY;
             // recurse for each child position
-            for mut child in &mut node.children {
-                value = f32::min(value, minimax(&mut child, true, depth - 1));
+            for child in &mut node.children {
+                value = f32::min(value, minimax(child, true, depth - 1));
             }
-            return value;
+            value
         }
     }
 }
@@ -100,15 +100,15 @@ pub fn use_minimax(
         None,
     );
     let best_score = minimax(&mut initial_node, maximising, depth);
-    if initial_node.children.len() == 0 {
-        return None;
+    if initial_node.children.is_empty() {
+        None
     } else {
         let best_child = initial_node
             .children
             .iter()
             .find(|child| child.score == best_score)
             .unwrap();
-        return Some(best_child.source_move.clone()?);
+        best_child.source_move.clone()
     }
 }
 fn highest_score_index(scores: Vec<f32>) -> Option<i8> {
