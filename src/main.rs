@@ -9,7 +9,7 @@ fn main() {
     let board = pos.board();
 
     // find score of initial position
-    let score = evaluator::evaluate(board);
+    let score = evaluator::evaluate(&pos);
     println!("Score, initial: {}", score);
 
     // find best move from initial position
@@ -23,7 +23,7 @@ fn main() {
     let pos_2: shakmaty::Chess = fen.into_position(CastlingMode::Standard).unwrap();
 
     // find score of non-initial position
-    let score_2 = evaluator::evaluate(pos_2.board());
+    let score_2 = evaluator::evaluate(&pos_2);
     println!("Score, non-initial: {}", score_2);
 
     // find best move from non-initial position

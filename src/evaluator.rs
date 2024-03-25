@@ -1,6 +1,8 @@
-use shakmaty::{Color, Role};
+use shakmaty::{Color, Position, Role};
 
-pub fn evaluate(board: &shakmaty::Board) -> f32 {
+pub fn evaluate(position: &shakmaty::Chess) -> f32 {
+    let board = position.board();
+
     let piece_value_mod = 0.1;
     let piece_value = piece_value(board) * piece_value_mod;
 
@@ -10,7 +12,10 @@ pub fn evaluate(board: &shakmaty::Board) -> f32 {
     let centre_knight_mod = 0.1;
     let centre_knight = centre_knight(board) * centre_knight_mod;
 
-    piece_value + centre_pawn + centre_knight
+    let castling_mod = 0.1;
+    let castling = castling(position) * castling_mod;
+
+    piece_value + centre_pawn + centre_knight + castling
 }
 
 fn piece_value(board: &shakmaty::Board) -> f32 {
@@ -97,6 +102,20 @@ fn centre_knight(board: &shakmaty::Board) -> f32 {
     let b_n_s = count_set_bits(b_n.0);
 
     (w_n_s - b_n_s) as f32
+}
+
+fn castling(position: &shakmaty::Chess) -> f32 {
+    // evaluates whether each side has castled
+    // simple test initially, later would like to identify whether
+    // the castling is on the same side or opposite side to the opponent "attack"
+
+    // score from white castling
+    let w_c_s = position.castles().has_color(Color::White);
+
+    // score from black castling
+    let b_c_s = position.castles().has_color(Color::Black);
+
+    (w_c_s as i8 - b_c_s as i8) as f32
 }
 
 fn count_set_bits(bits: u64) -> i8 {

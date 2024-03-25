@@ -17,7 +17,7 @@ pub fn depth_1_best_move(position: shakmaty::Chess) -> Option<shakmaty::Move> {
     for x in moves_list.clone() {
         let temp_pos = position.clone();
         let new_pos = temp_pos.play(&x).unwrap();
-        moves_score.push(crate::evaluator::evaluate(new_pos.board()));
+        moves_score.push(crate::evaluator::evaluate(&new_pos));
     }
 
     // return move with best evaluator score
@@ -59,7 +59,7 @@ fn minimax(
     // implementation of the minimax algorithm
     // end if max depth is reached, or the game is over
     if depth == 0 {
-        return evaluate(node.position.board());
+        return evaluate(&node.position);
     } else {
         // generate children positions and nodes
         let child_moves = node.position.legal_moves();
@@ -68,7 +68,7 @@ fn minimax(
             match new_position {
                 Ok(legal_move) => node.new_child(PositionNode::new(
                     legal_move.clone(),
-                    evaluate(legal_move.board()),
+                    evaluate(&legal_move),
                     Some(x.clone()),
                 )),
                 Err(_) => return node.score,
@@ -110,7 +110,7 @@ pub fn use_minimax(
     // use the minimax algo to find the best move
     let mut initial_node = PositionNode::new(
         initial_position.clone(),
-        evaluate(initial_position.clone().board()),
+        evaluate(&initial_position.clone()),
         None,
     );
     let mut alpha = -INFINITY;
