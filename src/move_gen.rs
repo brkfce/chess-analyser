@@ -49,7 +49,13 @@ impl PositionNode {
     }
 }
 
-fn minimax(node: &mut PositionNode, maximising: bool, depth: i8) -> f32 {
+fn minimax(
+    node: &mut PositionNode,
+    maximising: bool,
+    depth: i8,
+    alpha: &mut f32,
+    beta: &mut f32,
+) -> f32 {
     // implementation of the minimax algorithm
     // end if max depth is reached, or the game is over
     if depth == 0 {
@@ -73,7 +79,11 @@ fn minimax(node: &mut PositionNode, maximising: bool, depth: i8) -> f32 {
             let mut value = -INFINITY;
             // recurse for each sub position
             for child in &mut node.children {
-                value = f32::max(value, minimax(child, false, depth - 1));
+                value = f32::max(value, minimax(child, false, depth - 1, alpha, beta));
+                *alpha = f32::max(*alpha, value);
+                if value >= *beta {
+                    break;
+                }
             }
             value
         // find best value for player 2/player we are hoping to "beat"
@@ -81,7 +91,11 @@ fn minimax(node: &mut PositionNode, maximising: bool, depth: i8) -> f32 {
             let mut value = INFINITY;
             // recurse for each child position
             for child in &mut node.children {
-                value = f32::min(value, minimax(child, true, depth - 1));
+                value = f32::min(value, minimax(child, true, depth - 1, alpha, beta));
+                *beta = f32::min(*beta, value);
+                if value <= *alpha {
+                    break;
+                }
             }
             value
         }
@@ -99,7 +113,9 @@ pub fn use_minimax(
         evaluate(initial_position.clone().board()),
         None,
     );
-    let best_score = minimax(&mut initial_node, maximising, depth);
+    let mut alpha = -INFINITY;
+    let mut beta = INFINITY;
+    let best_score = minimax(&mut initial_node, maximising, depth, &mut alpha, &mut beta);
     if initial_node.children.is_empty() {
         None
     } else {
