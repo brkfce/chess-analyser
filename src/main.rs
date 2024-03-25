@@ -1,4 +1,4 @@
-use shakmaty::{self, fen, CastlingMode, Position};
+use shakmaty::{self, fen, CastlingMode};
 
 mod evaluator;
 mod move_gen;
@@ -6,7 +6,6 @@ mod move_gen;
 fn main() {
     // create initial position
     let pos = shakmaty::Chess::default();
-    let board = pos.board();
 
     // find score of initial position
     let score = evaluator::evaluate(&pos);
