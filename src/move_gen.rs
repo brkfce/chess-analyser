@@ -66,11 +66,13 @@ fn minimax(
         for x in child_moves {
             let new_position = node.position.clone().play(&x);
             match new_position {
-                Ok(legal_move) => node.new_child(PositionNode::new(
-                    legal_move.clone(),
-                    evaluate(&legal_move),
-                    Some(x.clone()),
-                )),
+                Ok(legal_move) => {
+                    node.new_child(PositionNode::new(
+                        legal_move.clone(),
+                        evaluate(&legal_move),
+                        Some(x.clone()),
+                    ));
+                }
                 Err(_) => return node.score,
             }
         }
@@ -85,6 +87,7 @@ fn minimax(
                     break;
                 }
             }
+            node.score = value;
             value
         // find best value for player 2/player we are hoping to "beat"
         } else {
@@ -97,6 +100,7 @@ fn minimax(
                     break;
                 }
             }
+            node.score = value;
             value
         }
     }

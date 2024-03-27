@@ -30,7 +30,11 @@ fn main() {
     println!("Best move, non-initial: {}", best_move_2);
 
     // use minimax algo to find best move from initial position
-    let depth = 5;
+    let depth = 11;
+    // NOTE TO SELF: This generates the children nodes for analysis. Would be good to be able to traverse down that tree,
+    // to see what the optimal moves are-but if doing this, it would be smart to not have to regenerate the whole tree-
+    // instead, just pruning down to the optimal node, and expanding the bottom by one "depth".
+    // Will need to think about the best way to do this/reuse generated nodes generally.
     let best_move_depth = move_gen::use_minimax(pos.clone(), true, depth);
     match best_move_depth {
         Some(b_m) => println!("Best move, initial, depth {}: {}", depth, b_m),
